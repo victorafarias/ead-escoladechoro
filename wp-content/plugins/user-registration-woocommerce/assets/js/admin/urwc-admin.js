@@ -1,0 +1,191 @@
+/* global user_registration_woocommerce_params */
+(function ($) {
+  var UR_Woocommerce_Admin = {
+    init: function () {
+      // WooCommerce Setting page start.
+
+      // Check all checkbox.
+      $(document).on(
+        "change",
+        ".user_registration_woocommerce_form_fields_wrapper .urwc-select-all",
+        function () {
+          var $this = $(this),
+            $parent_table = $this.closest(
+              ".user_registration_woocommerce_form_fields_wrapper table"
+            ),
+            $table_body = $parent_table.find("tbody");
+
+          if ($this.is(":checked")) {
+            $table_body
+              .find('tr td:first-child input[type="checkbox"]')
+              .prop("checked", true);
+            $parent_table.find(".urwc-select-all").prop("checked", true);
+          } else {
+            $table_body
+              .find('tr td:first-child input[type="checkbox"]')
+              .prop("checked", false);
+            $parent_table.find(".urwc-select-all").prop("checked", false);
+          }
+        }
+      );
+
+      handleWoocommerceSettings(
+        $("#user_registration_woocommerce_settings_form")
+      );
+      $(document).on(
+        "change",
+        "#user_registration_woocommerce_settings_form",
+        function () {
+          handleWoocommerceSettings($(this));
+        }
+      );
+      $(document).on(
+        "change",
+        "select.urwc-product-tab-panel-select",
+        function () {
+          handleWoocommerceProductPageSettings($(this));
+        }
+      );
+
+      function handleWoocommerceSettings(node) {
+        ($sync_checkout = $(
+          "#user_registration_woocommrece_settings_sync_checkout"
+        )),
+        ($sync_checkout_logged_in = $(
+          "#user_registration_woocommrece_settings_sync_checkout_logged_in"
+        )),
+        ($login_option_enabled = $(
+          "#user_registration_woocommrece_settings_login_option"
+        )),
+		($sync_registration = $(
+		"#user_registration_woocommrece_settings_replace_login_registration"
+		));
+        if (node.val() === "0") {
+          $sync_checkout.closest(".user-registration-global-settings").hide();
+          $sync_checkout_logged_in.closest(".user-registration-global-settings").hide();
+          $login_option_enabled.closest(".user-registration-global-settings").hide();
+          $sync_registration
+            .closest(".user-registration-global-settings")
+            .hide();
+        } else {
+          $sync_checkout.closest(".user-registration-global-settings").show();
+		  if ( $sync_checkout.prop("checked") ) {
+			  $sync_checkout_logged_in.closest(".user-registration-global-settings").show();
+			  $login_option_enabled.closest(".user-registration-global-settings").show();
+			} else {
+			  $sync_checkout_logged_in.closest(".user-registration-global-settings").hide();
+			  $login_option_enabled.closest(".user-registration-global-settings").hide();
+		  }
+          $sync_registration
+            .closest(".user-registration-global-settings")
+            .show();
+        }
+        $sync_checkout.trigger("change");
+      }
+
+	  function handleWoocommerceProductPageSettings(node){
+		if (node.val() === "0") {
+			$(document).find(".wp-list-table ").hide();
+		  } else {
+			$(document).find(".wp-list-table ").show();
+			var $table_wrapper = $(document)
+              .find("div.user_registration_woocommerce_form_fields_wrapper");
+			var data = {
+				action:
+				  "user_registration_woocommerce_setting_form_field_listing",
+				security:
+				  user_registration_woocommerce_params.user_registration_woocommerce_form_field_listing,
+				form_id: node.val(),
+				option_key: node.attr('product_form_field_key')
+			  };
+
+			  if ("0" !== node.val()) {
+				$.ajax({
+					url: user_registration_woocommerce_params.ajax_url,
+					data: data,
+					type: "POST",
+					beforeSend: function () {
+					node.attr("disabled", "disabled");
+					},
+					success: function (response) {
+					if (typeof response.data.table === "undefined") {
+						$table_wrapper.html("");
+					} else {
+						$table_wrapper.html(response.data.table);
+					}
+					},
+					complete: function () {
+					node.prop("disabled", false);
+					},
+				});
+			} else {
+			  $table_wrapper.html("");
+			}
+
+		  }
+	  }
+
+      $(document).on(
+        "change",
+        "#user_registration_woocommrece_settings_sync_checkout",
+        function () {
+          var $this = $(this),
+            $form = $("#user_registration_woocommerce_settings_form"),
+            $table_wrapper = $this
+              .closest("div.user-registration")
+              .find("div.user_registration_woocommerce_form_fields_wrapper"),
+            data = {
+              action:
+                "user_registration_woocommerce_setting_form_field_listing",
+              security:
+                user_registration_woocommerce_params.user_registration_woocommerce_form_field_listing,
+              form_id: $form.val(),
+              option_key: $this.data("field_option_key"),
+            };
+
+			$sync_checkout_logged_in = $(
+				"#user_registration_woocommrece_settings_sync_checkout_logged_in"
+			);
+			$sync_checkout_login_option = $(
+					"#user_registration_woocommrece_settings_login_option"
+			);
+          if ($this.is(":checked") && "0" !== $form.val()) {
+
+			$sync_checkout_logged_in.closest(".user-registration-global-settings").show();
+			$sync_checkout_login_option.closest(".user-registration-global-settings").show();
+
+            $.ajax({
+              url: user_registration_woocommerce_params.ajax_url,
+              data: data,
+              type: "POST",
+              beforeSend: function () {
+                $form.attr("disabled", "disabled");
+                $this.attr("disabled", "disabled");
+              },
+              success: function (response) {
+                if (typeof response.data.table === "undefined") {
+                  $table_wrapper.html("");
+                } else {
+                  $table_wrapper.html(response.data.table);
+                }
+              },
+              complete: function () {
+                $form.prop("disabled", false);
+                $this.prop("disabled", false);
+              },
+            });
+          } else {
+			$sync_checkout_logged_in.closest(".user-registration-global-settings").hide();
+			$sync_checkout_login_option.closest(".user-registration-global-settings").hide();
+            $table_wrapper.html("");
+          }
+        }
+      );
+      // WooCommerce Setting page end.
+    },
+  };
+
+  $(document).ready(function () {
+    UR_Woocommerce_Admin.init();
+  });
+})(jQuery);

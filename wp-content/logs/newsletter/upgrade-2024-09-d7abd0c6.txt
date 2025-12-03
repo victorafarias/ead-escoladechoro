@@ -1,0 +1,41 @@
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,6 MB/512 MB - [cron] > Start upgrade from 8.0.6
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,3 MB/512 MB - [cron] > Array
+(
+    [`wp_newsletter_emails`] => Created table `wp_newsletter_emails`
+)
+
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,3 MB/512 MB - [cron] > Array
+(
+    [`wp_newsletter_sent`] => Created table `wp_newsletter_sent`
+    [wp_newsletter_sent.status] => Changed type of wp_newsletter_sent.status from tinyint(3) unsigned to tinyint(1) unsigned
+    [wp_newsletter_sent.open] => Changed type of wp_newsletter_sent.open from tinyint(3) unsigned to tinyint(1) unsigned
+)
+
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,4 MB/512 MB - [cron] > Array
+(
+    [`wp_newsletter`] => Created table `wp_newsletter`
+)
+
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,3 MB/512 MB - [cron] > Array
+(
+    [`wp_newsletter_user_logs`] => Created table `wp_newsletter_user_logs`
+)
+
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,3 MB/512 MB - [cron] > Array
+(
+    [`wp_newsletter_user_meta`] => Created table `wp_newsletter_user_meta`
+)
+
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,3 MB/512 MB - [cron] > Array
+(
+    [`wp_newsletter_stats`] => Created table `wp_newsletter_stats`
+)
+
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,3 MB/512 MB - [cron] > Array
+(
+    [`wp_newsletter_logs`] => Created table `wp_newsletter_logs`
+    [wp_newsletter_logs.status] => Changed type of wp_newsletter_logs.status from int(11) to int
+)
+
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,3 MB/512 MB - [cron] > Backing up options of 8.0.6
+27-09-2024 12:43:38 - INFO  - 8.5.2 - 40,4 MB/512 MB - [cron] > End

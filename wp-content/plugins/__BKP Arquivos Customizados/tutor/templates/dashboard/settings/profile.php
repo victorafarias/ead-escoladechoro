@@ -1,0 +1,114 @@
+<?php
+/**
+ * Profile
+ *
+ * @package Tutor\Templates
+ * @subpackage Dashboard\Settings
+ * @author Themeum <support@themeum.com>
+ * @link https://themeum.com
+ * @since 1.6.2
+ */
+ 
+// Impede acesso direto ao arquivo
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+// Verifica se o usuário está logado
+if (!is_user_logged_in()) {
+    wp_die('Você precisa estar logado para acessar esta página.');
+}
+
+// Obtém o usuário logado
+$current_user = wp_get_current_user();
+
+// Declara variáveis com os dados do usuário
+$nome_atual = esc_attr($current_user->first_name);
+$email_atual = esc_attr($current_user->user_email);
+$display_name = esc_attr($current_user->display_name);
+
+// Verifica se o formulário foi enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_usuario_token'])) {
+    // Valida o nonce
+    if (!wp_verify_nonce($_POST['editar_usuario_token'], 'editar_usuario_nonce')) {
+        echo '<div class="error notice"><p>Erro de segurança. Tente novamente.</p></div>';
+    } else {
+        // Sanitiza os dados enviados no formulário
+        $novo_nome = sanitize_text_field($_POST['user_name']);
+        $novo_email = sanitize_email($_POST['user_email']);
+        $novo_display_name = sanitize_text_field($_POST['display_name']);
+        
+        // Valida o e-mail
+        if (!is_email($novo_email)) {
+            echo '<div class="error notice"><p>Por favor, insira um endereço de e-mail válido.</p></div>';
+        } else {
+            // Atualiza o usuário no banco de dados
+            $resultado = wp_update_user([
+                'ID' => $current_user->ID,
+                'first_name' => $novo_nome,
+                'user_email' => $novo_email,
+                'display_name' => $novo_display_name,
+            ]);
+
+            // Verifica se a atualização foi bem-sucedida
+            if (is_wp_error($resultado)) {
+                echo '<div class="tutor-alert tutor-alert-danger"><p class="alert-error">' . esc_html($update_result->get_error_message()) . '</p></div>';
+            } else {
+                echo '<div class="tutor-alert tutor-alert-success"><p class="alert-success">' . esc_html__('Profile updated successfully', 'tutor') . '</p></div>';
+                // Atualiza as variáveis para exibir os novos valores
+                $nome_atual = esc_attr($novo_nome);
+                $email_atual = esc_attr($novo_email);
+                $display_name = esc_attr($novo_display_name);
+            }
+        }
+    }
+}
+?>
+
+<div class="tutor-dashboard-setting-profile tutor-dashboard-content-inner">
+	
+<form method="post">
+	<div class="tutor-row">
+		<div class="tutor-col-12 tutor-col-sm-6 tutor-col-md-12 tutor-col-lg-6 tutor-mb-32">
+        <label class="tutor-form-label tutor-color-secondary" for="user_name">Nome:</label>
+        <input class="tutor-form-control" type="text" name="user_name" id="user_name" value="<?php echo $nome_atual; ?>" required>
+    	</div>
+	</div>
+
+	<!--Iguala o nome de usuário ao nome de exibição -->
+	<?php
+    if (isset($_POST['tutor_action']) && $_POST['tutor_action'] === 'edit_user_profile_update') {
+        if (!empty($_POST['first_name']) && !empty($_POST['display_name'])) {
+            $_POST['display_name'] = sanitize_user($_POST['first_name']);
+        }
+    }
+    ?>	
+	
+	<div class="tutor-row">
+		<div class="tutor-col-12 tutor-col-sm-6 tutor-col-md-12 tutor-col-lg-6 tutor-mb-32">
+        <label class="tutor-form-label tutor-color-secondary" for="user_email">E-mail:</label>
+        <input class="tutor-form-control" type="email" name="user_email" id="user_email" value="<?php echo $email_atual; ?>" required>
+        </div>
+    </div>
+
+	<div class="tutor-row hide-nome-publico">
+	<div class="tutor-col-12 tutor-col-sm-6 tutor-col-md-12 tutor-col-lg-6 tutor-mb-32">
+		<label class="tutor-form-label tutor-color-secondary" for="display_name">Nome de Exibição:</label>
+        <input class="tutor-form-control" type="text" name="display_name" id="display_name" value="<?php echo $display_name; ?>" readonly>
+	</div>
+    </div>
+
+    <?php wp_nonce_field('editar_usuario_nonce', 'editar_usuario_token'); ?>
+    
+	<div class="tutor-row">
+	    <div class="tutor-col-12">
+            <button type="submit" class="tutor-btn tutor-btn-primary button-primary">Salvar Alterações</button>
+        </div>
+    </div>
+</form>
+</div>
+
+<!-- Chamda do js que iguala o nome de exibição ao nome / email ao nome de usuário -->
+<?php
+wp_enqueue_script('copiar-nome-publico', plugin_dir_url(__FILE__) . '/copiar-nome-publico.js', array('jquery'), '1.0', true);
+?>

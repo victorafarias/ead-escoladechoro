@@ -1,0 +1,9 @@
+Coloque os 2 arquivos (elementor-pro-pt_BR.po e elementor-pro-pt_BR.mo) dentro da pasta wp-content\languages\plugins. 
+
+Se a pasta languages\plugins não existir, basta criá-la.
+
+Seu WordPress deve estar em português em Configurações > Geral.
+
+--
+
+Qualquer dúvida, entre em contato -> suporte@ultrapackv2.com
