@@ -10,9 +10,9 @@
  */
 
 $settings_url   = tutor_utils()->get_tutor_dashboard_page_permalink( 'settings' );
-//$withdraw       = tutor_utils()->get_tutor_dashboard_page_permalink( 'settings/withdraw-settings' );
+// ATUALIZADO $withdraw       = tutor_utils()->get_tutor_dashboard_page_permalink( 'settings/withdraw-settings' );
 $reset_password = tutor_utils()->get_tutor_dashboard_page_permalink( 'settings/reset-password' );
-//$social         = tutor_utils()->get_tutor_dashboard_page_permalink( 'settings/social-profile' );
+// ATUALIZADO $social         = tutor_utils()->get_tutor_dashboard_page_permalink( 'settings/social-profile' );
 
 $setting_menus = array(
 	'profile'        => array(
@@ -25,7 +25,7 @@ $setting_menus = array(
 		'title' => __( 'Password', 'tutor' ),
 		'role'  => false,
 	),
-	/**'withdrawal'     => array(
+	/** ATUALIZADO 'withdrawal'     => array(
 		'url'   => esc_url( $withdraw ),
 		'title' => __( 'Withdraw', 'tutor' ),
 		'role'  => 'instructor',
